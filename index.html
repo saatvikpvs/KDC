@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Studio-KDC</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #080809;
+  --text: #ede9e3;
+  --muted: #8a8578;
+  --card: #0e0e10;
+  --line: #1e1e22;
+  --gold: #c9a96e;
+  --gold2: #e8c98a;
+  --glow: rgba(201, 169, 110, 0.18);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Jost', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+a { text-decoration: none; color: inherit; }
+
+.container { width: min(1140px, 92%); margin: auto; }
+
+/* ─── CURSOR ─── */
+.cursor {
+  width: 10px; height: 10px;
+  background: var(--gold);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 99999;
+  transition: transform 0.1s ease;
+  mix-blend-mode: difference;
+}
+.cursor-ring {
+  width: 36px; height: 36px;
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 99998;
+  opacity: 0.5;
+  transition: all 0.18s ease;
+}
+
+/* ─── NAVBAR ─── */
+.navbar {
+  position: fixed;
+  top: 0; width: 100%;
+  height: 72px;
+  z-index: 9000;
+  transition: background 0.4s ease, backdrop-filter 0.4s;
+}
+.navbar.scrolled {
+  background: rgba(8, 8, 9, 0.88);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--line);
+}
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 72px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.brand img { height: 34px; filter: brightness(1.1); }
+.brand span {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: var(--text);
+}
+.nav ul {
+  list-style: none;
+  display: flex;
+  gap: 32px;
+}
+.nav a {
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  transition: color 0.25s;
+  position: relative;
+  padding-bottom: 4px;
+}
+.nav a::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 0; height: 1px;
+  background: var(--gold);
+  transition: width 0.3s ease;
+}
+.nav a:hover, .nav a.active {
+  color: var(--text);
+}
+.nav a:hover::after, .nav a.active::after {
+  width: 100%;
+}
+
+/* ─── INTRO ─── */
+#intro {
+  position: fixed;
+  inset: 0;
+  background: #060607;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+  cursor: pointer;
+}
+#intro.hide {
+  opacity: 0;
+  visibility: hidden;
+}
+.intro-content {
+  text-align: center;
+  animation: introFadeUp 1.2s ease forwards;
+}
+.intro-content img {
+  height: 80px;
+  margin-bottom: 28px;
+  opacity: 0;
+  animation: introFadeUp 1s 0.3s ease forwards;
+}
+.intro-content h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(52px, 8vw, 80px);
+  font-weight: 300;
+  letter-spacing: 8px;
+  color: var(--text);
+  opacity: 0;
+  animation: introFadeUp 1s 0.6s ease forwards;
+}
+.intro-content p {
+  font-size: 11px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-top: 16px;
+  opacity: 0;
+  animation: introFadeUp 1s 0.9s ease forwards;
+}
+.intro-content span {
+  display: block;
+  margin-top: 48px;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--muted);
+  opacity: 0;
+  animation: introFadeUp 1s 1.4s ease forwards;
+}
+.intro-line {
+  width: 1px; height: 0;
+  background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+  margin: 20px auto 0;
+  animation: lineGrow 1s 2s ease forwards;
+}
+
+@keyframes introFadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes lineGrow {
+  to { height: 50px; }
+}
+
+/* ─── HERO VIDEO ─── */
+#home {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.hero-video-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.hero-video-bg video {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  filter: brightness(0.35) saturate(0.7);
+}
+.hero-video-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    linear-gradient(to bottom, rgba(8,8,9,0.4) 0%, transparent 30%, transparent 60%, rgba(8,8,9,0.9) 100%),
+    linear-gradient(to right, rgba(8,8,9,0.5) 0%, transparent 50%);
+}
+/* Animated grain overlay on hero */
+.hero-video-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 0 20px;
+}
+.hero-eyebrow {
+  font-size: 11px;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 24px;
+  opacity: 0;
+  animation: heroFade 1s 0.2s ease forwards;
+}
+.hero-content h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(48px, 7vw, 96px);
+  font-weight: 300;
+  line-height: 1.05;
+  letter-spacing: 2px;
+  color: var(--text);
+  opacity: 0;
+  animation: heroFade 1.2s 0.5s ease forwards;
+}
+.hero-content h1 em {
+  font-style: italic;
+  color: var(--gold2);
+}
+.hero-content p {
+  max-width: 520px;
+  margin: 28px auto 0;
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.8;
+  color: rgba(237,233,227,0.65);
+  letter-spacing: 0.5px;
+  opacity: 0;
+  animation: heroFade 1s 0.9s ease forwards;
+}
+.hero-scroll-hint {
+  position: absolute;
+  bottom: 44px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  animation: heroFade 1s 1.6s ease forwards;
+}
+.hero-scroll-hint span {
+  font-size: 10px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.scroll-line {
+  width: 1px;
+  height: 50px;
+  background: linear-gradient(to bottom, var(--gold), transparent);
+  animation: scrollPulse 2s 2s ease-in-out infinite;
+}
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.3; transform: scaleY(1); }
+  50% { opacity: 1; transform: scaleY(1.1); }
+}
+@keyframes heroFade {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── SECTION BASE ─── */
+section {
+  padding: 100px 0;
+  position: relative;
+}
+section:not(#home) {
+  border-top: 1px solid var(--line);
+}
+.section-label {
+  font-size: 10px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(36px, 4vw, 56px);
+  font-weight: 300;
+  line-height: 1.1;
+  color: var(--text);
+  margin-bottom: 48px;
+}
+
+/* ─── ABOUT ─── */
+.about-top {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 64px;
+  align-items: center;
+}
+.about-image {
+  position: relative;
+}
+.about-image img {
+  width: 100%;
+  border-radius: 4px;
+  display: block;
+  filter: grayscale(20%) contrast(1.05);
+}
+.about-image::before {
+  content: '';
+  position: absolute;
+  inset: -12px;
+  border: 1px solid var(--gold);
+  border-radius: 4px;
+  opacity: 0.2;
+  pointer-events: none;
+}
+.about-text p {
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.9;
+  color: var(--muted);
+  margin-bottom: 18px;
+}
+.about-text p strong {
+  color: var(--text);
+  font-weight: 400;
+}
+@media (max-width: 768px) {
+  .about-top { grid-template-columns: 1fr; gap: 36px; }
+}
+
+/* ─── TIMELINE ─── */
+.timeline-wrap {
+  max-width: 500px;
+  margin: 52px 0 0;
+}
+.timeline-card {
+  background: linear-gradient(135deg, #0e0e10 0%, #111114 100%);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 28px 24px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s ease;
+}
+.timeline-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: linear-gradient(to bottom, var(--gold), transparent);
+  border-radius: 4px 0 0 4px;
+}
+.timeline-card h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+.timeline-card p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--muted);
+  font-weight: 300;
+}
+.timeline-slider {
+  width: 100%;
+  appearance: none;
+  height: 2px;
+  background: var(--line);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+.timeline-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px; height: 16px;
+  background: var(--gold);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 12px var(--gold);
+}
+.timeline-slider::-moz-range-thumb {
+  width: 16px; height: 16px;
+  background: var(--gold);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 12px var(--gold);
+}
+.timeline-years {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 12px;
+  letter-spacing: 1px;
+}
+
+/* ─── PROJECT GRID ─── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+@media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+
+/* ─── 3D TILT CARD ─── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  will-change: transform;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  background: radial-gradient(ellipse at var(--mx, 50%) var(--my, 50%), rgba(201,169,110,0.12) 0%, transparent 65%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 2;
+}
+.card:hover::before {
+  opacity: 1;
+}
+.card:hover {
+  border-color: rgba(201, 169, 110, 0.4);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 30px rgba(201,169,110,0.08);
+}
+.card img {
+  width: 100%;
+  aspect-ratio: 16/10;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s ease, filter 0.4s ease;
+}
+.card:hover img {
+  transform: scale(1.04);
+  filter: brightness(1.05);
+}
+.card-body {
+  padding: 18px 18px 20px;
+  position: relative;
+  z-index: 1;
+}
+.card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.card-meta {
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.card-arrow {
+  position: absolute;
+  bottom: 18px; right: 18px;
+  width: 32px; height: 32px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  font-size: 16px;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.3s ease, transform 0.3s ease, border-color 0.3s;
+}
+.card:hover .card-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ─── GALLERY ─── */
+.masonry {
+  column-count: 4;
+  column-gap: 16px;
+}
+.masonry img {
+  width: 100%;
+  margin-bottom: 16px;
+  border-radius: 6px;
+  break-inside: avoid;
+  display: block;
+  cursor: zoom-in;
+  transition: transform 0.4s ease, filter 0.4s ease, box-shadow 0.4s ease;
+  filter: grayscale(15%) brightness(0.9);
+}
+.masonry img:hover {
+  transform: scale(1.02);
+  filter: grayscale(0%) brightness(1.05);
+  box-shadow: 0 8px 32px rgba(201,169,110,0.12);
+}
+@media (max-width: 1200px) { .masonry { column-count: 3; } }
+@media (max-width: 800px) { .masonry { column-count: 2; } }
+@media (max-width: 500px) { .masonry { column-count: 1; } }
+
+/* ─── CONTACT ─── */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  margin-top: 48px;
+}
+.contact-panel h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 400;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+.contact-panel p {
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 2;
+  color: var(--muted);
+}
+.contact-panel a {
+  color: var(--gold);
+  transition: color 0.2s;
+}
+.contact-panel a:hover { color: var(--gold2); }
+.contact-divider {
+  width: 40px; height: 1px;
+  background: var(--gold);
+  margin-bottom: 24px;
+  opacity: 0.4;
+}
+@media (max-width: 600px) { .contact-grid { grid-template-columns: 1fr; } }
+
+/* ─── FOOTER ─── */
+footer {
+  padding: 32px 0;
+  border-top: 1px solid var(--line);
+  text-align: center;
+}
+footer p {
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+/* ─── MODAL ─── */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: none;
+  pointer-events: none;
+}
+.modal.active {
+  display: block;
+  pointer-events: auto;
+}
+.modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(12px);
+}
+.modal-content {
+  position: absolute;
+  top: 0; right: 0;
+  width: min(860px, 100%);
+  height: 100vh;
+  background: #0c0c0e;
+  overflow-y: auto;
+  padding: 80px 52px 60px;
+  border-left: 1px solid var(--line);
+  animation: slideInRight 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+@keyframes slideInRight {
+  from { transform: translateX(40px); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+body.modal-open { overflow: hidden; }
+.close-btn {
+  position: fixed;
+  top: 24px; right: 28px;
+  width: 44px; height: 44px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--line);
+  color: var(--text);
+  border-radius: 50%;
+  font-size: 22px;
+  cursor: pointer;
+  z-index: 10001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, border-color 0.2s;
+}
+.close-btn:hover {
+  background: rgba(201,169,110,0.12);
+  border-color: var(--gold);
+}
+#modalTitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 300;
+  margin-bottom: 40px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--line);
+}
+.project-block {
+  margin: 0 0 48px;
+}
+.project-block img {
+  width: 100%;
+  border-radius: 8px;
+  cursor: zoom-in;
+  display: block;
+  transition: filter 0.3s;
+}
+.project-block img:hover { filter: brightness(1.05); }
+.project-text {
+  margin-top: 20px;
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.9;
+  color: var(--muted);
+}
+
+/* ─── IMAGE OVERLAY ─── */
+.image-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.96);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 10002;
+  cursor: zoom-out;
+}
+.image-overlay.active { display: flex; }
+.image-overlay img {
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: 8px;
+}
+
+/* ─── LIGHTBOX ─── */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.96);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  cursor: zoom-out;
+}
+.lightbox.active { display: flex; }
+.lightbox-img {
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: 8px;
+}
+.lightbox-close {
+  position: absolute;
+  top: 20px; right: 30px;
+  font-size: 32px;
+  color: var(--text);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+.lightbox-close:hover { opacity: 1; }
+
+/* ─── SCROLL REVEAL ─── */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── GOLD ACCENT LINE ─── */
+.gold-rule {
+  width: 48px; height: 1px;
+  background: var(--gold);
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+/* ─── SECTION SCROLL TARGET ─── */
+section { scroll-margin-top: 72px; }
+</style>
+</head>
+<body>
+
+<!-- CUSTOM CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- INTRO SCREEN -->
+<div id="intro">
+  <div class="intro-content">
+    <img src="assets/images/logo.png" alt="Studio-KDC">
+    <h1>Studio-KDC</h1>
+    <p><strong>K</strong>artik &nbsp;<strong>D</strong>esign &nbsp;<strong>C</strong>ollective</p>
+    <span>Tap anywhere to enter</span>
+    <div class="intro-line"></div>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<header class="navbar" id="navbar">
+  <div class="container nav">
+    <div class="brand">
+      <img src="assets/images/logo.png" alt="Studio-KDC">
+      <span>Studio-KDC</span>
+    </div>
+    <ul>
+      <li><a href="#home" class="active">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#gallery">Gallery</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</header>
+
+<!-- ─── HERO ─── -->
+<section id="home">
+  <div class="hero-video-bg">
+    <!-- Architecture ambient video from a public CDN -->
+    <video autoplay muted loop playsinline poster="assets/images/project1.png">
+      <source src="https://cdn.coverr.co/videos/coverr-city-architecture-morning-1542/mp4" type="video/mp4">
+      <source src="https://assets.mixkit.co/videos/preview/mixkit-architectural-detail-of-a-building-in-construction-43699-large.mp4" type="video/mp4">
+      <!-- fallback: shows hero image as poster if video fails -->
+    </video>
+  </div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Architecture · Design · Identity</p>
+    <h1>Timeless spaces for<br><em>modern living</em></h1>
+    <p>Climate-responsive, context-driven architecture crafted<br>with clarity, restraint, and purpose.</p>
+  </div>
+  <div class="hero-scroll-hint">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- ─── ABOUT ─── -->
+<section id="about">
+  <div class="container">
+    <p class="section-label reveal">About the studio</p>
+    <h2 class="section-title reveal">Studio-KDC</h2>
+
+    <div class="about-top reveal">
+      <div class="about-image">
+        <img src="assets/images/about.jpeg" alt="Studio-KDC">
+      </div>
+      <div class="about-text">
+        <div class="gold-rule"></div>
+        <p><strong>Studio-KDC (Kartik Design Collective)</strong> is an architecture and design practice focused on creating climate-responsive, context-driven spaces.</p>
+        <p>Our work blends modern design thinking with local traditions, materials, and sustainable principles. We believe architecture should be timeless, honest, and rooted in its surroundings.</p>
+        <p>Each project is approached with clarity, restraint, and a deep respect for place, people, and purpose.</p>
+      </div>
+    </div>
+
+    <div class="timeline-wrap reveal">
+      <div class="timeline-card">
+        <h4 id="timelineTitle"></h4>
+        <p id="timelineText"></p>
+      </div>
+      <input type="range" min="0" max="3" step="1" value="0"
+             class="timeline-slider" id="timelineSlider">
+      <div class="timeline-years">
+        <span>2002</span>
+        <span>2014</span>
+        <span>2018</span>
+        <span>2021</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PROJECTS ─── -->
+<section id="projects">
+  <div class="container">
+    <p class="section-label reveal">Selected work</p>
+    <h2 class="section-title reveal">Projects</h2>
+    <div class="grid">
+
+      <!-- PROJECT 1 -->
+      <article class="card reveal"
+        data-title="Chợ Long Biên"
+        data-content='[{"img":"assets/images/project1.png","text":"Located in the dense urban fabric of Hanoi, the Chợ Long Biên Market is envisioned as a hybrid civic infrastructure that merges commerce, culture, and mobility into a community-centric public space. Designed as part of the ALAC competition, the project responds to the growing demand for resilient and inclusive public architecture in rapidly urbanizing cities."},{"img":"assets/images/project11.png","text":"Site Plan"},{"img":"assets/images/project12.png","text":"Eye level point of view"},{"img":"assets/images/project13.png","text":"Retail Block Axonometric view"}]'>
+        <img src="assets/images/project1.png" alt="Chợ Long Biên">
+        <div class="card-body">
+          <h3 class="card-title">Chợ Long Biên</h3>
+          <div class="card-meta">Connecting Community Through Tradition and Modernity</div>
+          <div class="card-arrow">↗</div>
+        </div>
+      </article>
+
+      <!-- PROJECT 2 -->
+      <article class="card reveal"
+        data-title="Pravaha Homes"
+        data-content='[{"img":"assets/images/project2.png","text":"This retirement housing project is shaped by the flow of the site water stream, creating an organic layout that blends seamlessly with nature. The design features 300 units in total including 100 assisted-living studios, 120 two-bedroom villas, and 80 one-bedroom units — along with community hubs, all planned with elderly-friendly principles like wide pathways, gentle slopes, and landscaped open spaces."},{"img":"assets/images/project22.jpg"},{"img":"assets/images/project23.jpg"}]'>
+        <img src="assets/images/project2.png" alt="Pravaha Homes">
+        <div class="card-body">
+          <h3 class="card-title">Pravaha Homes</h3>
+          <div class="card-meta">Inspired by Flow, Designed for Care</div>
+          <div class="card-arrow">↗</div>
+        </div>
+      </article>
+
+      <!-- PROJECT 3 -->
+      <article class="card reveal"
+        data-title="RAAHGAH"
+        data-content='[{"img":"assets/images/project3.png","text":"Located near the historic Falaknuma Palace, this integrated hub merges transportation and tourism into a single civic experience. Combining a high-capacity bus terminal with cultural and public programs, it serves both daily commuters and tourists. The design layers markets, galleries, and plazas through interconnected pedestrian corridors, dissolving rigid zoning."},{"img":"assets/images/project32.jpg"},{"img":"assets/images/project33.jpg"},{"img":"assets/images/project34.jpg"}]'>
+        <img src="assets/images/project3.png" alt="RAAHGAH">
+        <div class="card-body">
+          <h3 class="card-title">RAAHGAH</h3>
+          <div class="card-meta">A 21st-century rethinking of India's most vital node</div>
+          <div class="card-arrow">↗</div>
+        </div>
+      </article>
+
+      <!-- PROJECT 4 -->
+      <article class="card reveal"
+        data-title="Anaya Hospital"
+        data-content='[{"img":"assets/images/project4.png","text":"Anaya Multispecialty Hospital is a 50-bedded healthcare facility designed for an Indian-origin doctor returning after 25 years of practice abroad, driven by a personal mission to uplift healthcare access in his hometown near Alwal-Tumkunta, Secunderabad. Set on a 1.29-acre suburban site, the hospital is envisioned as a trusted community anchor offering ethical, patient-centric care."},{"img":"assets/images/project42.jpg"},{"img":"assets/images/project43.jpg"},{"img":"assets/images/project44.jpg"},{"img":"assets/images/project45.jpg"}]'>
+        <img src="assets/images/project4.png" alt="Anaya Hospital">
+        <div class="card-body">
+          <h3 class="card-title">Anaya Hospital</h3>
+          <div class="card-meta">Patient-centric community healthcare anchor</div>
+          <div class="card-arrow">↗</div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── GALLERY ─── -->
+<section id="gallery">
+  <div class="container">
+    <p class="section-label reveal">Visual Journal</p>
+    <h2 class="section-title reveal">Photography &amp; Renders</h2>
+    <div class="masonry reveal">
+      <img src="assets/images/img1.jpg" alt=""> <img src="assets/images/img5.jpg" alt="">
+      <img src="assets/images/img14.jpg" alt=""> <img src="assets/images/img4.jpg" alt="">
+      <img src="assets/images/img15.jpg" alt=""> <img src="assets/images/img6.jpg" alt="">
+      <img src="assets/images/img7.jpg" alt=""> <img src="assets/images/img8.jpg" alt="">
+      <img src="assets/images/img3.jpg" alt=""> <img src="assets/images/img10.jpg" alt="">
+      <img src="assets/images/img11.jpg" alt=""> <img src="assets/images/img12.jpg" alt="">
+      <img src="assets/images/img13.jpg" alt=""> <img src="assets/images/img19.jpg" alt="">
+      <img src="assets/images/img2.jpg" alt=""> <img src="assets/images/img16.jpg" alt="">
+      <img src="assets/images/img17.jpg" alt=""> <img src="assets/images/img18.jpg" alt="">
+      <img src="assets/images/img20.jpg" alt=""> <img src="assets/images/img21.jpg" alt="">
+      <img src="assets/images/img22.jpg" alt=""> <img src="assets/images/img23.jpg" alt="">
+      <img src="assets/images/img24.jpg" alt=""> <img src="assets/images/img25.jpg" alt="">
+      <img src="assets/images/img26.jpg" alt=""> <img src="assets/images/img27.jpg" alt="">
+      <img src="assets/images/img28.jpg" alt=""> <img src="assets/images/img29.jpg" alt="">
+      <img src="assets/images/img30.jpg" alt=""> <img src="assets/images/img31.jpg" alt="">
+      <img src="assets/images/img32.jpg" alt=""> <img src="assets/images/img33.jpg" alt="">
+      <img src="assets/images/img34.jpg" alt=""> <img src="assets/images/img35.jpg" alt="">
+      <img src="assets/images/img36.jpg" alt=""> <img src="assets/images/img37.jpg" alt="">
+      <img src="assets/images/img38.jpg" alt=""> <img src="assets/images/img39.jpg" alt="">
+      <img src="assets/images/img40.jpg" alt=""> <img src="assets/images/img41.jpg" alt="">
+      <img src="assets/images/img42.jpg" alt="">
+    </div>
+  </div>
+</section>
+
+<!-- ─── CONTACT ─── -->
+<section id="contact">
+  <div class="container">
+    <p class="section-label reveal">Get in touch</p>
+    <h2 class="section-title reveal">Contact</h2>
+    <div class="contact-grid">
+      <div class="contact-panel reveal">
+        <div class="contact-divider"></div>
+        <h3>Studio</h3>
+        <p>
+          Email: <a href="mailto:pvsskartik8@gmail.com">pvsskartik8@gmail.com</a><br>
+          Phone: <a href="tel:+919154469333">+91 91544 69333</a>
+        </p>
+      </div>
+      <div class="contact-panel reveal">
+        <div class="contact-divider"></div>
+        <h3>Practice</h3>
+        <p>Residential &amp; mixed-use projects across South India.<br>Open for collaborations and commissions.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>© 2025 Studio-KDC · Kartik Design Collective · Visakhapatnam</p>
+  </div>
+</footer>
+
+<!-- PROJECT MODAL -->
+<div class="modal" id="projectModal">
+  <div class="modal-overlay"></div>
+  <div class="modal-content">
+    <button class="close-btn">&times;</button>
+    <h2 id="modalTitle"></h2>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<!-- IMAGE ZOOM OVERLAY -->
+<div class="image-overlay" id="imageOverlay">
+  <img id="overlayImage" alt="">
+</div>
+
+<!-- GALLERY LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <span class="lightbox-close">&times;</span>
+  <img class="lightbox-img" id="lightboxImg" alt="">
+</div>
+
+<script>
+/* ─── CURSOR ─── */
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx + 'px';
+  cursor.style.top  = my + 'px';
+});
+(function animRing() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  ring.style.left = (rx - 18) + 'px';
+  ring.style.top  = (ry - 18) + 'px';
+  requestAnimationFrame(animRing);
+})();
+document.querySelectorAll('a, button, .card, .masonry img').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cursor.style.transform = 'scale(2)';
+    ring.style.transform = 'scale(1.5)';
+    ring.style.opacity = '0.8';
+  });
+  el.addEventListener('mouseleave', () => {
+    cursor.style.transform = 'scale(1)';
+    ring.style.transform = 'scale(1)';
+    ring.style.opacity = '0.5';
+  });
+});
+
+/* ─── INTRO ─── */
+const intro = document.getElementById('intro');
+function dismissIntro() {
+  intro.classList.add('hide');
+  setTimeout(() => intro.remove(), 900);
+}
+intro.addEventListener('click', dismissIntro);
+window.addEventListener('scroll', dismissIntro, { once: true });
+
+/* ─── NAVBAR SCROLL ─── */
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 20);
+});
+
+/* ─── ACTIVE NAV ON SCROLL ─── */
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav a');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(a => a.classList.remove('active'));
+      const active = document.querySelector(`.nav a[href="#${entry.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { threshold: 0.4 });
+sections.forEach(s => observer.observe(s));
+
+/* ─── SMOOTH NAV CLICK ─── */
+navLinks.forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    dismissIntro();
+    const target = document.querySelector(link.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
+/* ─── SCROLL REVEAL ─── */
+const revealObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+/* ─── 3D TILT ON CARDS ─── */
+document.querySelectorAll('.card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const rect = card.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const dx = (e.clientX - cx) / (rect.width / 2);
+    const dy = (e.clientY - cy) / (rect.height / 2);
+    const tiltX = dy * -10;
+    const tiltY = dx * 10;
+    card.style.transform = `perspective(700px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(1.02)`;
+    // Move glow with mouse
+    const pctX = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
+    const pctY = ((e.clientY - rect.top) / rect.height * 100).toFixed(1);
+    card.style.setProperty('--mx', pctX + '%');
+    card.style.setProperty('--my', pctY + '%');
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = 'perspective(700px) rotateX(0deg) rotateY(0deg) scale(1)';
+  });
+});
+
+/* ─── TIMELINE ─── */
+const educationData = [
+  { title: "Birth", text: "Born in Visakhapatnam" },
+  { title: "2014 – 2018 · High School", text: "Vijayam Techno School, Visakhapatnam, Andhra Pradesh" },
+  { title: "2018 – 2020 · Secondary High School", text: "Ascent Junior College, Visakhapatnam, Andhra Pradesh" },
+  { title: "2021 – 2026 · B.Arch", text: "School of Planning and Architecture, JNAFAU, Hyderabad" }
+];
+const slider = document.getElementById('timelineSlider');
+const tlTitle = document.getElementById('timelineTitle');
+const tlText  = document.getElementById('timelineText');
+function updateTimeline(i) {
+  tlTitle.textContent = educationData[i].title;
+  tlText.textContent  = educationData[i].text;
+}
+updateTimeline(0);
+slider.addEventListener('input', () => updateTimeline(+slider.value));
+
+/* ─── MODAL ─── */
+const modal       = document.getElementById('projectModal');
+const modalTitle  = document.getElementById('modalTitle');
+const modalBody   = document.getElementById('modalBody');
+const closeBtn    = document.querySelector('.close-btn');
+const modalOverlay = document.querySelector('.modal-overlay');
+const imageOverlay = document.getElementById('imageOverlay');
+const overlayImg   = document.getElementById('overlayImage');
+
+function decodeHTML(str) {
+  const t = document.createElement('textarea');
+  t.innerHTML = str;
+  return t.value;
+}
+
+document.querySelectorAll('.card').forEach(card => {
+  card.addEventListener('click', () => {
+    modalTitle.textContent = card.dataset.title;
+    modalBody.innerHTML = '';
+    const content = JSON.parse(decodeHTML(card.dataset.content));
+    content.forEach(block => {
+      const wrap = document.createElement('div');
+      wrap.className = 'project-block';
+      const img = document.createElement('img');
+      img.src = block.img;
+      img.addEventListener('click', e => {
+        e.stopPropagation();
+        overlayImg.src = img.src;
+        imageOverlay.classList.add('active');
+      });
+      wrap.appendChild(img);
+      if (block.text) {
+        const p = document.createElement('p');
+        p.className = 'project-text';
+        p.textContent = block.text;
+        wrap.appendChild(p);
+      }
+      modalBody.appendChild(wrap);
+    });
+    modal.classList.add('active');
+    document.body.classList.add('modal-open');
+  });
+});
+
+function closeModal() {
+  modal.classList.remove('active');
+  document.body.classList.remove('modal-open');
+  imageOverlay.classList.remove('active');
+  overlayImg.src = '';
+}
+closeBtn.addEventListener('click', closeModal);
+modalOverlay.addEventListener('click', closeModal);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+imageOverlay.addEventListener('click', () => {
+  imageOverlay.classList.remove('active');
+  overlayImg.src = '';
+});
+
+/* ─── GALLERY LIGHTBOX ─── */
+const lightbox    = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightboxImg');
+const lbClose     = document.querySelector('.lightbox-close');
+document.querySelectorAll('.masonry img').forEach(img => {
+  img.addEventListener('click', () => {
+    lightboxImg.src = img.src;
+    lightbox.classList.add('active');
+  });
+});
+lbClose.addEventListener('click', () => lightbox.classList.remove('active'));
+lightbox.addEventListener('click', e => {
+  if (e.target !== lightboxImg) lightbox.classList.remove('active');
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') lightbox.classList.remove('active');
+});
+</script>
+</body>
+</html>
